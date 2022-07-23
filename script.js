@@ -66,10 +66,30 @@ const emprestimo = {
 
 let emprestimos = []
 
-// pesquisar livro
-function pesquisarLivro() {}
+// pesquisar livro | status: em desenvolvimento
+function pesquisarLivro() {
+  const pesquisa = prompt('Digite: ')
 
-// listar livros
+  const livrosPorNome = _.map(livros, item => {
+    let { id, nome, status } = item
+    return `${id}. ${nome} - (Status: ${status})`
+  })
+
+  let verficarNome = livrosPorNome.map(item => {
+    let existe = _.includes(item.toLowerCase(), pesquisa)
+    if (existe) {
+      return item
+    }
+  })
+
+  return verficarNome.map(item => {
+    if (item !== undefined) {
+      console.log(item)
+    }
+  })
+}
+
+// listar livros | status: finalizado
 function listarLivros() {
   const menuLivros = [
     {
@@ -94,9 +114,10 @@ function listarLivros() {
   menus(menuLivros, '\nEscolha uma opção')
 }
 
-// verificar cadrastro cliente
+// verificar cadrastro cliente | status: para desenvolver
 function verificarCadastro() {}
-//cadrastar cliente caso !exista
+
+//cadrastar cliente caso !exista | status: finalizado, mas !implementado
 function cadastrarCliente() {
   console.log(
     'Olá, bem vindo a área de cadastros!!\nInsira todos os dados necessarios para se cadastrar:\n'
@@ -117,7 +138,7 @@ function cadastrarCliente() {
   }, 3000)
 }
 
-// devover livro
+// devover livro | status: em desenvolvimento
 function devolverLivro() {
   function devolver() {}
   const menuDevolucoes = [
@@ -155,7 +176,7 @@ function devolverLivro() {
   menus(menuDevolucoes, '\nEscolha uma opção: ')
 }
 
-// retirada
+// retirada | status: em desenvolvimento
 function emprestarLivro() {
   const menuEmprestimos = [
     {
@@ -216,12 +237,12 @@ Emprestado para:${nomeCliente}\n`)
   }
 }
 
-// doação/cadrastro livro obs: validar existencia do livro antes do push e verificar repetição do 'id'
+// doação/cadrastro livro | status: finalizado
 function cadrastarLivro() {
   console.log(
     'Olá, bem vindo a área de cadastros!!\nInsira todos os dados necessarios para cadastrar um livro:\n'
   )
-  let novoLivro = livro
+  let novoLivro = _.clone(livro)
   novoLivro.id = livros.length + 1
   novoLivro.nome = prompt('Nome do livro: ')
   novoLivro.autor = prompt('Seu autor: ')
@@ -240,7 +261,7 @@ function cadrastarLivro() {
   }, 3000)
 }
 
-// menu de entrada
+// menu de entrada | status: finalizado
 function menus(dados, pergunta) {
   dados.map(item => {
     console.log(`${item.id}. ${item.label}`)
@@ -255,6 +276,7 @@ function menus(dados, pergunta) {
   })
 }
 
+// status: finalizado
 function menuPrincipal() {
   console.clear()
   console.log(`BEM VINDO A BIBLIOTECA ÁGIL
@@ -271,11 +293,11 @@ function menuPrincipal() {
       label: 'Listar livros disponiveis',
       callback: listarLivros
     },
-    // {
-    //   id: 2,
-    //   label: 'Pesquisar livro por nome',
-    //   callback: pesquisarLivro
-    // },
+    {
+      id: 2,
+      label: 'Pesquisar livro por nome',
+      callback: pesquisarLivro
+    },
     {
       id: 3,
       label: 'Cadastrar livro',
