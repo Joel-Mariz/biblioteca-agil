@@ -66,27 +66,71 @@ const emprestimo = {
 
 let emprestimos = []
 
-// pesquisar livro | status: em desenvolvimento
-function pesquisarLivro() {
-  const pesquisa = prompt('Digite: ')
+// pesquisar livros por filtros | status: em desenvolvimento
+function filtrarLivros() {
+  const filtrarNome = pesquisa =>
+    _.map(livros, nomeLivro => {
+      let { id, nome, autor, ano } = nomeLivro
 
-  const livrosPorNome = _.map(livros, item => {
-    let { id, nome, status } = item
-    return `${id}. ${nome} - (Status: ${status})`
-  })
+      let verificarNome = _.includes(
+        nome
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
+        pesquisa
+      )
+      if (verificarNome)
+        console.log(`${id}. ${nome} -- Autor: ${autor}, ${ano}`)
+    })
 
-  let verficarNome = livrosPorNome.map(item => {
-    let existe = _.includes(item.toLowerCase(), pesquisa)
-    if (existe) {
-      return item
+  const filtrarAutor = pesquisa =>
+    _.map(livros, autorLivro => {
+      let { id, nome, autor, ano } = autorLivro
+
+      let verficarAutor = _.includes(
+        autor
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
+        pesquisa
+      )
+      if (verficarAutor)
+        console.log(`${id}. ${nome} -- Autor: ${autor}, ${ano}`)
+    })
+
+  const filtrarAno = pesquisa =>
+    _.map(livros, anoLivro => {
+      let { id, nome, autor, ano } = anoLivro
+
+      let verficarAno = _.includes(ano.toString(), pesquisa)
+      if (verficarAno) console.log(`${id}. ${nome} -- Autor: ${autor}, ${ano}`)
+    })
+
+  const menuFiltros = [
+    {
+      id: 1,
+      label: 'Pesquisar por nome ',
+      callback: () => {
+        return filtrarNome(prompt('Digite: '))
+      }
+    },
+    {
+      id: 2,
+      label: 'Pesquisar por autor ',
+      callback: () => {
+        return filtrarAutor(prompt('Digite: '))
+      }
+    },
+    {
+      id: 3,
+      label: 'Pesquisar por ano',
+      callback: () => {
+        return filtrarAno(prompt('Digite: '))
+      }
     }
-  })
+  ]
 
-  return verficarNome.map(item => {
-    if (item !== undefined) {
-      console.log(item)
-    }
-  })
+  return menus(menuFiltros, '\nEscolha sua opção')
 }
 
 // listar livros | status: finalizado
@@ -295,8 +339,8 @@ function menuPrincipal() {
     },
     {
       id: 2,
-      label: 'Pesquisar livro por nome',
-      callback: pesquisarLivro
+      label: 'Pesquisar livro por filtros',
+      callback: filtrarLivros
     },
     {
       id: 3,
