@@ -68,96 +68,75 @@ let emprestimos = []
 
 // pesquisar livros por filtros | status: em desenvolvimento
 function filtrarLivros() {
-  const emprestimo = []
   const normalize = norm =>
     norm
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
 
-  const filtrarNome = pesquisa => {
-    setTimeout(() => {
-      console.log('\n')
-      menus(menuAuxiliar, '\nDigite')
-    }, 2000)
+  emprestimos = []
+  const imprimir = (id, nome, autor, ano) => {
+    console.log(`
+    ${id}. ${nome} -- ${autor}, ${ano}`)
+    emprestimos.push({ id, nome })
+  }
 
-    return _.map(livros, nomeLivro => {
+  const filtrarNome = pesquisa =>
+    _.map(livros, nomeLivro => {
       let { id, nome, autor, ano } = nomeLivro
 
       let verificarNome = _.includes(normalize(nome), normalize(pesquisa))
-      setTimeout(() => {
-        if (verificarNome) {
-          console.log(`\n${id}. ${nome} -- ${autor}, ${ano}`)
-          emprestimo.push({ id, nome })
-        }
-      }, 1500)
+
+      if (verificarNome) {
+        imprimir(id, nome, autor, ano)
+      }
     })
-  }
 
-  const filtrarAutor = pesquisa => {
-    setTimeout(() => {
-      console.log('\n')
-      menus(menuAuxiliar, '\nDigite')
-    }, 2000)
-
-    return _.map(livros, autorLivro => {
+  const filtrarAutor = pesquisa =>
+    _.map(livros, autorLivro => {
       let { id, nome, autor, ano } = autorLivro
 
-      let verficarAutor = _.includes(normalize(autor), normalize(pesquisa))
-      setTimeout(() => {
-        if (verficarAutor) {
-          console.log(`\n${id}. ${nome} -- ${autor}, ${ano}`)
-          emprestimo.push({ id, nome })
-        }
-      }, 1500)
+      let verificarAutor = _.includes(normalize(autor), normalize(pesquisa))
+
+      if (verificarAutor) {
+        imprimir(id, nome, autor, ano)
+      }
     })
-  }
 
-  const filtrarAno = pesquisa => {
-    setTimeout(() => {
-      console.log('\n')
-      menus(menuAuxiliar, '\nDigite')
-    }, 2000)
-
-    return _.map(livros, anoLivro => {
+  const filtrarAno = pesquisa =>
+    _.map(livros, anoLivro => {
       let { id, nome, autor, ano } = anoLivro
 
-      let verficarAno = _.includes(
+      let verificarAno = _.includes(
         normalize(ano.toString()),
         normalize(pesquisa)
       )
-      setTimeout(() => {
-        if (verficarAno) {
-          console.log(`\n${id}. ${nome} -- Autor: ${autor}, ${ano}`)
-          emprestimo.push({ id, nome })
-        }
-      }, 1500)
+
+      if (verificarAno) {
+        setTimeout(() => {
+          console.log('\n')
+        }, 100)
+        imprimir(id, nome, autor, ano)
+      }
     })
-  }
 
   const menuFiltros = [
     {
       id: 1,
       label: 'Pesquisar livro por nome',
-      callback: () => {
-        return filtrarNome(prompt('Digite o nome do livro que deseja buscar: '))
-      }
+      callback: () =>
+        filtrarNome(prompt('Digite o nome do livro que deseja buscar: '))
     },
     {
       id: 2,
       label: 'Pesquisar livro por autor',
-      callback: () => {
-        return filtrarAutor(
-          prompt('Digite o nome do autor que deseja buscar: ')
-        )
-      }
+      callback: () =>
+        filtrarAutor(prompt('Digite o nome do autor que deseja buscar: '))
     },
     {
       id: 3,
       label: 'Pesquisar livro por ano',
-      callback: () => {
-        return filtrarAno(prompt('Digite o ano que deseja buscar: '))
-      }
+      callback: () => filtrarAno(prompt('Digite o ano que deseja buscar: '))
     }
   ]
 
@@ -170,9 +149,7 @@ function filtrarLivros() {
     {
       id: 2,
       label: 'Solicitar emprestimo',
-      callback: () => {
-        return emprestarLivro(emprestimo)
-      }
+      callback: () => emprestarLivro(emprestimos)
     },
     {
       id: 3,
@@ -185,6 +162,10 @@ function filtrarLivros() {
 Bem vindo a área de pesquisa!! Aqui você pode fazer uma busca rapida dos livros em nossa estante.
 Escolha o filtro que deseja aplicar e retornaremos todos o livros que atenderem à pesquisa.\n`)
 
+  setTimeout(() => {
+    console.log('\n')
+    menus(menuAuxiliar, 'Escolha sua opção')
+  }, 1000)
   return menus(menuFiltros, 'Escolha sua opção')
 }
 
@@ -215,7 +196,7 @@ function listarLivros() {
   })
   console.log('---------------------------------------------\n')
 
-  menus(menuLivros, '\nEscolha uma opção')
+  menus(menuLivros, 'Escolha uma opção')
 }
 
 // verificar cadrastro cliente | status: para desenvolver
@@ -244,12 +225,11 @@ function cadastrarCliente() {
 
 // devover livro | status: em desenvolvimento
 function devolverLivro() {
-  function devolver() {}
   const menuDevolucoes = [
     {
       id: 1,
       label: 'Devolver livro emprestado',
-      callback: devolver
+      callback: devolverLivro
     },
     {
       id: 2,
@@ -275,9 +255,9 @@ function devolverLivro() {
   if (existeLivro.length > 0) {
     _.remove(emprestimos, { id_livro: escolherLivro })
   } else {
-    console.log('Livro não encontado')
+    console.log('\nLivro não encontado\n')
   }
-  menus(menuDevolucoes, '\nEscolha uma opção: ')
+  menus(menuDevolucoes, 'Escolha uma opção')
 }
 
 // retirada | status: em desenvolvimento
@@ -346,10 +326,9 @@ Emprestado para:${nomeCliente}\n`)
     menus(menuEmprestimos, 'Escolha uma opção')
   } else {
     console.log(
-      '\nOps... Esse livro não esta disponivel no momento. que tal outra escolha'
+      '\nOps... Esse livro não esta disponivel no momento. Vamos leva-lo para o menu.\n'
     )
     setTimeout(() => {
-      console.clear()
       menus(menuEmprestimos, 'Escolha uma opção')
     }, 2000)
   }
@@ -384,6 +363,7 @@ function menus(dados, pergunta) {
   dados.map(item => {
     console.log(`${item.id}. ${item.label}`)
   })
+  console.log('\n')
   const itemSelecionado = prompt(`${pergunta}: `)
   console.clear()
 
@@ -433,7 +413,7 @@ BEM VINDO A BIBLIOTECA ÁGIL
     //   callback: cadastrarCliente
     // }
   ]
-  menus(menuPrincipal, '\nDigite sua opção')
+  menus(menuPrincipal, 'Digite sua opção')
 }
 
 menuPrincipal()
