@@ -237,27 +237,67 @@ function devolverLivro() {
       callback: menuPrincipal
     }
   ]
-  console.log('LIVROS EMPRESTADOS DA ESTANTE\n')
-  console.log('---------------------------------------------')
-  emprestimos.map(item => {
-    livros.map(livro => {
-      if (item.id_livro == livro.id) {
-        console.log(` ${item.id}. ${livro.nome}`)
-      }
+
+  const menuAuxiliar = [
+    {
+      id: 1,
+      label: 'Ir para a estante de livros',
+      callback: listarLivros
+    },
+    {
+      id: 2,
+      label: 'Ir para pesquisa',
+      callback: filtrarLivros
+    },
+    {
+      id: 3,
+      label: 'Voltar ao menu principal',
+      callback: menuPrincipal
+    }
+  ]
+  console.log('\n  **** ÁREA DE DEVOLUÇÕES ****\n')
+  if (emprestimos.length > 0) {
+    console.log('---------------------------------------------')
+    emprestimos.map(item => {
+      livros.map(livro => {
+        if (item.id_livro == livro.id) {
+          console.log(` ${item.id_livro}. ${livro.nome}`)
+        }
+      })
     })
-  })
-  console.log('---------------------------------------------\n')
+    console.log('---------------------------------------------\n')
 
-  let escolherLivro = prompt('Digite o numero do livro que deseja devolver: ')
+    let escolherLivro = prompt('Digite o numero do livro que deseja devolver: ')
+    let existeLivro = emprestimos.filter(item => item.id_livro == escolherLivro)
 
-  let existeLivro = emprestimos.filter(item => item.id_livro == escolherLivro)
+    if (existeLivro.length > 0) {
+      _.remove(emprestimos, item => item.id_livro == escolherLivro)
+      console.log('\nRemovendo livro....')
 
-  if (existeLivro.length > 0) {
-    _.remove(emprestimos, { id_livro: escolherLivro })
+      setTimeout(() => {
+        console.clear()
+        console.log('\n  **** ÁREA DE DEVOLUÇÕES ****\n')
+        console.log(
+          '\nLivro removido com sucesso!! Vamos redirecionar você para o menu.\n'
+        )
+      }, 1000)
+    } else {
+      console.clear()
+      console.log('\n  **** ÁREA DE DEVOLUÇÕES ****\n')
+      console.log(
+        '\nLivro não encontrado. Vamos redirecionar você para o menu.\n'
+      )
+    }
+
+    setTimeout(() => {
+      menus(menuDevolucoes, 'Escolha uma opção')
+    }, 1500)
   } else {
-    console.log('\nLivro não encontado\n')
+    console.log('---------------------------------------------')
+    console.log('  **** NÃO HÁ NADA A SE VER AQUI ****')
+    console.log('---------------------------------------------\n')
+    menus(menuAuxiliar, 'Escolha uma opção')
   }
-  menus(menuDevolucoes, 'Escolha uma opção')
 }
 
 // retirada | status: em desenvolvimento
