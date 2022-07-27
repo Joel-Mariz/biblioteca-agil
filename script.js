@@ -74,11 +74,11 @@ function filtrarLivros() {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
 
-  emprestimos = []
+  const emprestimosDaPesquisa = []
   const imprimir = (id, nome, autor, ano) => {
     console.log(`
     ${id}. ${nome} -- ${autor}, ${ano}`)
-    emprestimos.push({ id, nome })
+    emprestimosDaPesquisa.push({ id, nome })
   }
 
   const filtrarNome = pesquisa =>
@@ -149,7 +149,7 @@ function filtrarLivros() {
     {
       id: 2,
       label: 'Solicitar emprestimo',
-      callback: () => emprestarLivro(emprestimos)
+      callback: () => emprestarLivro(emprestimosDaPesquisa)
     },
     {
       id: 3,
@@ -261,17 +261,17 @@ function devolverLivro() {
     emprestimos.map(item => {
       livros.map(livro => {
         if (item.id_livro == livro.id) {
-          console.log(` ${item.id_livro}. ${livro.nome}`)
+          console.log(` ${item.id}. ${livro.nome}`)
         }
       })
     })
     console.log('---------------------------------------------\n')
 
     let escolherLivro = prompt('Digite o numero do livro que deseja devolver: ')
-    let existeLivro = emprestimos.filter(item => item.id_livro == escolherLivro)
+    let existeLivro = emprestimos.filter(item => item.id == escolherLivro)
 
     if (existeLivro.length > 0) {
-      _.remove(emprestimos, item => item.id_livro == escolherLivro)
+      _.remove(emprestimos, item => item.id == escolherLivro)
       console.log('\nRemovendo livro....')
 
       setTimeout(() => {
@@ -301,7 +301,7 @@ function devolverLivro() {
 }
 
 // retirada | status: em desenvolvimento
-function emprestarLivro(livro) {
+function emprestarLivro(livrosDaPesquisa) {
   const menuEmprestimos = [
     {
       id: 1,
@@ -320,15 +320,14 @@ function emprestarLivro(livro) {
     }
   ]
 
-  if (livro) {
-    console.log('LIVROS DA SUA PESQUISA')
+  console.log('\n  **** LIVROS PARA EMPRESTAR ****\n')
+  if (livrosDaPesquisa) {
     console.log('---------------------------------------------')
-    livro.map(item => {
+    livrosDaPesquisa.map(item => {
       console.log(` ${item.id}. ${item.nome}`)
     })
     console.log('---------------------------------------------\n')
   } else {
-    console.log('LIVROS DISPONIVEIS NA ESTANTE')
     console.log('---------------------------------------------')
     livros.map(item => {
       console.log(` ${item.id}. ${item.nome}`)
