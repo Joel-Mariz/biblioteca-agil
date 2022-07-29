@@ -68,75 +68,21 @@ let emprestimos = []
 
 // pesquisar livros por filtros | status: em desenvolvimento
 function filtrarLivros() {
-  const normalize = norm =>
-    norm
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-
-  const emprestimosDaPesquisa = []
-  const imprimir = (id, nome, autor, ano) => {
-    console.log(`
-    ${id}. ${nome} -- ${autor}, ${ano}`)
-    emprestimosDaPesquisa.push({ id, nome })
-  }
-
-  const filtrarNome = pesquisa =>
-    _.map(livros, nomeLivro => {
-      let { id, nome, autor, ano } = nomeLivro
-
-      let verificarNome = _.includes(normalize(nome), normalize(pesquisa))
-
-      if (verificarNome) {
-        imprimir(id, nome, autor, ano)
-      }
-    })
-
-  const filtrarAutor = pesquisa =>
-    _.map(livros, autorLivro => {
-      let { id, nome, autor, ano } = autorLivro
-
-      let verificarAutor = _.includes(normalize(autor), normalize(pesquisa))
-
-      if (verificarAutor) {
-        imprimir(id, nome, autor, ano)
-      }
-    })
-
-  const filtrarAno = pesquisa =>
-    _.map(livros, anoLivro => {
-      let { id, nome, autor, ano } = anoLivro
-
-      let verificarAno = _.includes(
-        normalize(ano.toString()),
-        normalize(pesquisa)
-      )
-
-      if (verificarAno) {
-        setTimeout(() => {
-          console.log('\n')
-        }, 100)
-        imprimir(id, nome, autor, ano)
-      }
-    })
-
   const menuFiltros = [
     {
       id: 1,
       label: 'Pesquisar livro por nome',
-      callback: () =>
-        filtrarNome(prompt('Digite o nome do livro que deseja buscar: '))
+      callback: filtrarNome
     },
     {
       id: 2,
       label: 'Pesquisar livro por autor',
-      callback: () =>
-        filtrarAutor(prompt('Digite o nome do autor que deseja buscar: '))
+      callback: filtrarAutor
     },
     {
       id: 3,
       label: 'Pesquisar livro por ano',
-      callback: () => filtrarAno(prompt('Digite o ano que deseja buscar: '))
+      callback: filtrarAno
     }
   ]
 
@@ -158,15 +104,63 @@ function filtrarLivros() {
     }
   ]
 
-  console.log(`
-Bem vindo a área de pesquisa!! Aqui você pode fazer uma busca rapida dos livros em nossa estante.
-Escolha o filtro que deseja aplicar e retornaremos todos o livros que atenderem à pesquisa.\n`)
+  console.log('\n  **** ÁREA DE PESQUISA ****\n')
+  console.log('Escolha o filtro que deseja aplicar na sua pesquisa:\n')
 
-  setTimeout(() => {
+  function filtrarNome() {
+    const nome = _.findKey({ nome: 'nome' })
+    buscarResultados(nome)
+  }
+
+  function filtrarAutor() {
+    const autor = _.findKey({ autor: 'autor' })
+    buscarResultados(autor)
+  }
+
+  function filtrarAno() {
+    const ano = _.findKey({ ano: 'ano' })
+    buscarResultados(ano)
+  }
+
+  const buscarResultados = filtroAplicado => {
+    console.log('\n  **** ÁREA DE PESQUISA ****\n')
+    const pesquisa = prompt(`Busque pelo ${filtroAplicado} do livro: `)
+
+    console.clear()
+    console.log('\n  **** ÁREA DE PESQUISA ****\n')
+    console.log('\nResultados da sua pesquia...\n')
+
+    for (let livro of livros) {
+      let existeLivro = _.includes(
+        normalize(livro[filtroAplicado]),
+        normalize(pesquisa)
+      )
+
+      if (existeLivro) {
+        imprimirResultados(livro)
+      }
+    }
+
     console.log('\n')
     menus(menuAuxiliar, 'Escolha sua opção')
-  }, 1000)
-  return menus(menuFiltros, 'Escolha sua opção')
+  }
+
+  const emprestimosDaPesquisa = []
+  const imprimirResultados = resultadoPesquisa => {
+    let { id, nome, autor, ano } = resultadoPesquisa
+
+    console.log(`${id}. ${nome} - ${autor}, ${ano} `)
+    emprestimosDaPesquisa.push({ id, nome })
+  }
+
+  const normalize = normalize =>
+    normalize
+      .toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+  menus(menuFiltros, 'Escolha sua opção')
 }
 
 // listar livros | status: finalizado
